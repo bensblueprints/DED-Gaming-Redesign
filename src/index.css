@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222 47% 3%;
+    --foreground: 0 0% 100%;
+    --card: 216 52% 8%;
+    --card-foreground: 0 0% 100%;
+    --popover: 216 52% 8%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 221 83% 53%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 216 52% 8%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 216 52% 8%;
+    --muted-foreground: 215 16% 62%;
+    --accent: 221 83% 53%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 221 76% 30% / 0.3;
+    --input: 216 52% 8%;
+    --ring: 221 83% 53%;
+    --radius: 0.5rem;
+    --sidebar-background: 222 47% 3%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 221 83% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 216 52% 8%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 221 76% 30% / 0.3;
+    --sidebar-ring: 221 83% 53%;
+  }
+
+  body {
+    @apply bg-ded-bg text-ded-text-primary font-body antialiased;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+
+  * {
+    @apply border-ded-border;
+  }
+}
+
+@layer components {
+  .container-main {
+    @apply max-w-[1280px] mx-auto px-4 md:px-6;
+  }
+
+  .section-padding {
+    @apply py-16 md:py-24;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-ded-accent-blue to-ded-accent-cyan bg-clip-text text-transparent;
+  }
+}
+
+/* Hide injected platform widgets */
+a[href*="kimi.com/agent"],
+a[href*="kimi"][target="_blank"],
+body > div:last-child > a[href*="kimi"],
+body > a[href*="kimi"],
+[class*="kimi-agent"],
+[id*="kimi-agent"] {
+  display: none !important;
+}
+
