@@ -1,6 +1,20 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Monitor, Users, CalendarDays, Check } from 'lucide-react'
+import { DatePicker } from 'antd'
+import type { Dayjs } from 'dayjs'
+import ToggleButton from '@mui/material/ToggleButton'
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
+import { Calendar as ShadcnCalendar } from '@/components/ui/calendar'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import PageHeader from '@/components/PageHeader'
 import ScrollReveal from '@/components/ScrollReveal'
 
@@ -37,6 +51,8 @@ const bookingOptions = [
   },
 ]
 
+const timeSlots = ['2PM', '3PM', '4PM', '5PM', '6PM', '7PM', '8PM', '9PM', '10PM', '11PM']
+
 export default function Book() {
   const [form, setForm] = useState({
     firstName: '',
@@ -44,17 +60,23 @@ export default function Book() {
     email: '',
     phone: '',
     type: 'Gaming Session',
-    date: '',
+    date: undefined as Dayjs | undefined,
     time: '2PM',
     guests: 1,
     requests: '',
+    station: 'pc',
   })
   const [submitted, setSubmitted] = useState(false)
+  const [calendarDate, setCalendarDate] = useState<Date | undefined>(new Date())
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setSubmitted(true)
     setTimeout(() => setSubmitted(false), 3000)
+  }
+
+  const handleTimeChange = (_: React.MouseEvent<HTMLElement>, newTime: string | null) => {
+    if (newTime) setForm(prev => ({ ...prev, time: newTime }))
   }
 
   return (
@@ -100,107 +122,230 @@ export default function Book() {
 
       {/* Booking Form */}
       <section id="form" className="section-padding bg-ded-surface/50">
-        <div className="container-main max-w-[800px]">
+        <div className="container-main max-w-[1000px]">
           <ScrollReveal>
-            <div className="bg-ded-surface rounded-xl border border-ded-border p-6 md:p-10">
-              <h2 className="font-display text-2xl font-semibold text-white mb-6 text-center">Book Your Session</h2>
-              
-              {submitted ? (
-                <div className="text-center py-10">
-                  <Check className="w-12 h-12 text-ded-accent-cyan mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-white mb-2">Booking Request Sent!</h3>
-                  <p className="text-ded-text-secondary">We'll confirm your booking within 24 hours.</p>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input
-                      type="text"
-                      placeholder="First Name"
-                      required
-                      className="w-full bg-ded-bg border border-ded-border rounded-lg px-4 py-3 text-sm text-white placeholder:text-ded-text-muted focus:border-ded-accent-blue focus:outline-none transition-colors"
-                      value={form.firstName}
-                      onChange={e => setForm({ ...form, firstName: e.target.value })}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Last Name"
-                      required
-                      className="w-full bg-ded-bg border border-ded-border rounded-lg px-4 py-3 text-sm text-white placeholder:text-ded-text-muted focus:border-ded-accent-blue focus:outline-none transition-colors"
-                      value={form.lastName}
-                      onChange={e => setForm({ ...form, lastName: e.target.value })}
-                    />
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
+              {/* Form */}
+              <div className="bg-ded-surface rounded-xl border border-ded-border p-6 md:p-10">
+                <h2 className="font-display text-2xl font-semibold text-white mb-6 text-center">Book Your Session</h2>
+
+                {submitted ? (
+                  <div className="text-center py-10">
+                    <Check className="w-12 h-12 text-ded-accent-cyan mx-auto mb-4" />
+                    <h3 className="text-xl font-semibold text-white mb-2">Booking Request Sent!</h3>
+                    <p className="text-ded-text-secondary">We'll confirm your booking within 24 hours.</p>
                   </div>
-                  <input
-                    type="email"
-                    placeholder="Email"
-                    required
-                    className="w-full bg-ded-bg border border-ded-border rounded-lg px-4 py-3 text-sm text-white placeholder:text-ded-text-muted focus:border-ded-accent-blue focus:outline-none transition-colors"
-                    value={form.email}
-                    onChange={e => setForm({ ...form, email: e.target.value })}
-                  />
-                  <input
-                    type="tel"
-                    placeholder="Phone"
-                    required
-                    className="w-full bg-ded-bg border border-ded-border rounded-lg px-4 py-3 text-sm text-white placeholder:text-ded-text-muted focus:border-ded-accent-blue focus:outline-none transition-colors"
-                    value={form.phone}
-                    onChange={e => setForm({ ...form, phone: e.target.value })}
-                  />
-                  <select
-                    className="w-full bg-ded-bg border border-ded-border rounded-lg px-4 py-3 text-sm text-white focus:border-ded-accent-blue focus:outline-none transition-colors"
-                    value={form.type}
-                    onChange={e => setForm({ ...form, type: e.target.value })}
-                  >
-                    <option>Gaming Session</option>
-                    <option>Coaching Session</option>
-                    <option>Private Event</option>
-                  </select>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input
-                      type="date"
-                      required
-                      className="w-full bg-ded-bg border border-ded-border rounded-lg px-4 py-3 text-sm text-white focus:border-ded-accent-blue focus:outline-none transition-colors"
-                      value={form.date}
-                      onChange={e => setForm({ ...form, date: e.target.value })}
-                    />
-                    <select
-                      className="w-full bg-ded-bg border border-ded-border rounded-lg px-4 py-3 text-sm text-white focus:border-ded-accent-blue focus:outline-none transition-colors"
-                      value={form.time}
-                      onChange={e => setForm({ ...form, time: e.target.value })}
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs text-ded-text-muted mb-1.5">First Name</label>
+                        <Input
+                          type="text"
+                          placeholder="First Name"
+                          required
+                          className="w-full bg-ded-bg border-ded-border text-white placeholder:text-ded-text-muted focus:border-ded-accent-blue"
+                          value={form.firstName}
+                          onChange={e => setForm({ ...form, firstName: e.target.value })}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-ded-text-muted mb-1.5">Last Name</label>
+                        <Input
+                          type="text"
+                          placeholder="Last Name"
+                          required
+                          className="w-full bg-ded-bg border-ded-border text-white placeholder:text-ded-text-muted focus:border-ded-accent-blue"
+                          value={form.lastName}
+                          onChange={e => setForm({ ...form, lastName: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs text-ded-text-muted mb-1.5">Email</label>
+                      <Input
+                        type="email"
+                        placeholder="Email"
+                        required
+                        className="w-full bg-ded-bg border-ded-border text-white placeholder:text-ded-text-muted focus:border-ded-accent-blue"
+                        value={form.email}
+                        onChange={e => setForm({ ...form, email: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-ded-text-muted mb-1.5">Phone</label>
+                      <Input
+                        type="tel"
+                        placeholder="Phone"
+                        required
+                        className="w-full bg-ded-bg border-ded-border text-white placeholder:text-ded-text-muted focus:border-ded-accent-blue"
+                        value={form.phone}
+                        onChange={e => setForm({ ...form, phone: e.target.value })}
+                      />
+                    </div>
+
+                    {/* Station Type - shadcn Select */}
+                    <div>
+                      <label className="block text-xs text-ded-text-muted mb-1.5">Station Type</label>
+                      <Select
+                        value={form.station}
+                        onValueChange={val => setForm({ ...form, station: val })}
+                      >
+                        <SelectTrigger className="w-full bg-ded-bg border-ded-border text-white">
+                          <SelectValue placeholder="Select station type" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-ded-surface border-ded-border">
+                          <SelectItem value="pc" className="text-white focus:bg-ded-surface-light focus:text-white">PC Gaming</SelectItem>
+                          <SelectItem value="console" className="text-white focus:bg-ded-surface-light focus:text-white">Console Lounge</SelectItem>
+                          <SelectItem value="vr" className="text-white focus:bg-ded-surface-light focus:text-white">VR Station</SelectItem>
+                          <SelectItem value="board" className="text-white focus:bg-ded-surface-light focus:text-white">Board Games</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Date - Ant Design DatePicker */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs text-ded-text-muted mb-1.5">Date</label>
+                        <DatePicker
+                          className="w-full bg-ded-bg border-ded-border text-white"
+                          popupClassName="dark-datepicker"
+                          value={form.date}
+                          onChange={date => {
+                            setForm({ ...form, date: date || undefined })
+                            if (date) setCalendarDate(date.toDate())
+                          }}
+                          format="MMM DD, YYYY"
+                          placeholder="Select date"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-ded-text-muted mb-1.5">Session Type</label>
+                        <Select
+                          value={form.type}
+                          onValueChange={val => setForm({ ...form, type: val })}
+                        >
+                          <SelectTrigger className="w-full bg-ded-bg border-ded-border text-white">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-ded-surface border-ded-border">
+                            <SelectItem value="Gaming Session" className="text-white focus:bg-ded-surface-light focus:text-white">Gaming Session</SelectItem>
+                            <SelectItem value="Coaching Session" className="text-white focus:bg-ded-surface-light focus:text-white">Coaching Session</SelectItem>
+                            <SelectItem value="Private Event" className="text-white focus:bg-ded-surface-light focus:text-white">Private Event</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    {/* Time Slot - MUI ToggleButtonGroup */}
+                    <div>
+                      <label className="block text-xs text-ded-text-muted mb-2">Time Slot</label>
+                      <ToggleButtonGroup
+                        value={form.time}
+                        exclusive
+                        onChange={handleTimeChange}
+                        aria-label="time slot"
+                        size="small"
+                        sx={{
+                          flexWrap: 'wrap',
+                          gap: '6px',
+                          '& .MuiToggleButtonGroup-grouped': {
+                            border: '1px solid rgba(30, 58, 138, 0.3)',
+                            borderRadius: '8px !important',
+                            color: '#CBD5E1',
+                            backgroundColor: '#030712',
+                            textTransform: 'none',
+                            fontFamily: '"Inter", sans-serif',
+                            fontSize: '0.8125rem',
+                            '&.Mui-selected': {
+                              backgroundColor: '#2563EB',
+                              color: '#FFFFFF',
+                              borderColor: '#2563EB',
+                            },
+                            '&:hover': {
+                              backgroundColor: '#111D35',
+                            },
+                            '&.Mui-selected:hover': {
+                              backgroundColor: '#3B82F6',
+                            },
+                          },
+                        }}
+                      >
+                        {timeSlots.map(t => (
+                          <ToggleButton key={t} value={t} aria-label={t}>
+                            {t}
+                          </ToggleButton>
+                        ))}
+                      </ToggleButtonGroup>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs text-ded-text-muted mb-1.5">Number of Guests</label>
+                      <Input
+                        type="number"
+                        min={1}
+                        max={50}
+                        placeholder="Number of Guests"
+                        className="w-full bg-ded-bg border-ded-border text-white placeholder:text-ded-text-muted focus:border-ded-accent-blue"
+                        value={form.guests}
+                        onChange={e => setForm({ ...form, guests: parseInt(e.target.value) || 1 })}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-ded-text-muted mb-1.5">Special Requests</label>
+                      <textarea
+                        rows={4}
+                        placeholder="Special Requests (optional)"
+                        className="w-full bg-ded-bg border border-ded-border rounded-lg px-4 py-3 text-sm text-white placeholder:text-ded-text-muted focus:border-ded-accent-blue focus:outline-none transition-colors resize-none"
+                        value={form.requests}
+                        onChange={e => setForm({ ...form, requests: e.target.value })}
+                      />
+                    </div>
+                    <Button
+                      type="submit"
+                      className="w-full bg-ded-accent-blue hover:bg-[#3B82F6] text-white font-semibold py-3 rounded-lg transition-all duration-200"
                     >
-                      {['2PM', '3PM', '4PM', '5PM', '6PM', '7PM', '8PM', '9PM', '10PM', '11PM'].map(t => (
-                        <option key={t}>{t}</option>
-                      ))}
-                    </select>
+                      Submit Booking Request
+                    </Button>
+                    <p className="text-xs text-ded-text-muted text-center">
+                      We'll confirm your booking within 24 hours.
+                    </p>
+                  </form>
+                )}
+              </div>
+
+              {/* Sidebar - Calendar */}
+              <div className="hidden lg:block">
+                <div className="sticky top-24 space-y-6">
+                  <div className="bg-ded-surface rounded-xl border border-ded-border p-5">
+                    <h3 className="font-display text-sm font-semibold text-white mb-4">Availability</h3>
+                    <ShadcnCalendar
+                      mode="single"
+                      selected={calendarDate}
+                      onSelect={setCalendarDate}
+                      className="bg-transparent text-white border-0 [&_.rdp-day]:text-white [&_.rdp-day_button:hover]:bg-ded-surface-light [&_.rdp-day_button.rdp-day_selected]:bg-ded-accent-blue [&_.rdp-head_cell]:text-ded-text-muted [&_.rdp-caption]:text-white"
+                    />
                   </div>
-                  <input
-                    type="number"
-                    min={1}
-                    max={50}
-                    placeholder="Number of Guests"
-                    className="w-full bg-ded-bg border border-ded-border rounded-lg px-4 py-3 text-sm text-white placeholder:text-ded-text-muted focus:border-ded-accent-blue focus:outline-none transition-colors"
-                    value={form.guests}
-                    onChange={e => setForm({ ...form, guests: parseInt(e.target.value) || 1 })}
-                  />
-                  <textarea
-                    rows={4}
-                    placeholder="Special Requests (optional)"
-                    className="w-full bg-ded-bg border border-ded-border rounded-lg px-4 py-3 text-sm text-white placeholder:text-ded-text-muted focus:border-ded-accent-blue focus:outline-none transition-colors resize-none"
-                    value={form.requests}
-                    onChange={e => setForm({ ...form, requests: e.target.value })}
-                  />
-                  <button
-                    type="submit"
-                    className="w-full bg-ded-accent-blue text-white font-semibold text-sm py-3 rounded-lg hover:bg-[#3B82F6] hover:-translate-y-0.5 transition-all duration-200"
-                  >
-                    Submit Booking Request
-                  </button>
-                  <p className="text-xs text-ded-text-muted text-center">
-                    We'll confirm your booking within 24 hours.
-                  </p>
-                </form>
-              )}
+                  <div className="bg-ded-surface rounded-xl border border-ded-border p-5">
+                    <h3 className="font-display text-sm font-semibold text-white mb-3">Booking Info</h3>
+                    <ul className="space-y-2 text-sm text-ded-text-secondary">
+                      <li className="flex items-center gap-2">
+                        <Check className="w-4 h-4 text-ded-accent-cyan" />
+                        Free cancellation up to 24h
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <Check className="w-4 h-4 text-ded-accent-cyan" />
+                        Instant confirmation
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <Check className="w-4 h-4 text-ded-accent-cyan" />
+                        Member discounts apply
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </div>
           </ScrollReveal>
         </div>

@@ -1,11 +1,20 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, Phone } from 'lucide-react'
+import { Menu, X, Phone, ShoppingCart, Bell } from 'lucide-react'
+import Badge from '@mui/material/Badge'
+import IconButton from '@mui/material/IconButton'
+import { Badge as AntBadge } from 'antd'
+import {
+  Menubar,
+  MenubarMenu,
+  MenubarTrigger,
+  MenubarContent,
+  MenubarItem,
+} from '@/components/ui/menubar'
 import { useApp } from '@/context/AppContext'
 
 const navLinks = [
   { label: 'Home', path: '/' },
-  { label: 'Games', path: '/games' },
   { label: 'Events', path: '/events' },
   { label: 'Coaching', path: '/coaching' },
   { label: 'Book', path: '/book' },
@@ -17,7 +26,7 @@ export default function Navigation() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const location = useLocation()
-  const { openLogin, isLoggedIn, user } = useApp()
+  const { openLogin, isLoggedIn, user, cartCount } = useApp()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 100)
@@ -56,7 +65,7 @@ export default function Navigation() {
             </Link>
 
             {/* Desktop Nav */}
-            <div className="hidden lg:flex items-center gap-8">
+            <div className="hidden lg:flex items-center gap-6">
               {navLinks.map(link => (
                 <Link
                   key={link.path}
@@ -75,10 +84,48 @@ export default function Navigation() {
                   />
                 </Link>
               ))}
+
+              {/* Games Dropdown via shadcn Menubar */}
+              <Menubar className="border-none bg-transparent">
+                <MenubarMenu>
+                  <MenubarTrigger className="text-sm font-medium tracking-wider text-ded-text-secondary hover:text-white data-[state=open]:text-white bg-transparent border-none cursor-pointer">
+                    Games
+                  </MenubarTrigger>
+                  <MenubarContent className="bg-ded-surface border-ded-border">
+                    <MenubarItem asChild className="cursor-pointer focus:bg-ded-surface-light focus:text-white">
+                      <Link to="/games">All Games</Link>
+                    </MenubarItem>
+                    <MenubarItem asChild className="cursor-pointer focus:bg-ded-surface-light focus:text-white">
+                      <Link to="/games?cat=pc">PC Games</Link>
+                    </MenubarItem>
+                    <MenubarItem asChild className="cursor-pointer focus:bg-ded-surface-light focus:text-white">
+                      <Link to="/games?cat=console">Console Games</Link>
+                    </MenubarItem>
+                  </MenubarContent>
+                </MenubarMenu>
+              </Menubar>
             </div>
 
             {/* Right side */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              {/* Cart Icon with MUI Badge */}
+              <Link to="/shop" className="relative">
+                <IconButton size="small" sx={{ color: '#CBD5E1' }} className="hover:text-white transition-colors">
+                  <Badge badgeContent={cartCount} color="primary" max={99}>
+                    <ShoppingCart className="w-5 h-5" />
+                  </Badge>
+                </IconButton>
+              </Link>
+
+              {/* Notification Ant Badge */}
+              <div className="hidden md:block">
+                <AntBadge dot color="#06B6D4">
+                  <IconButton size="small" sx={{ color: '#CBD5E1' }} className="hover:text-white transition-colors">
+                    <Bell className="w-5 h-5" />
+                  </IconButton>
+                </AntBadge>
+              </div>
+
               <a
                 href="tel:3475727763"
                 className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full border border-ded-accent-blue text-ded-accent-blue text-sm font-medium hover:bg-ded-accent-blue hover:text-white transition-all duration-250"
@@ -127,7 +174,7 @@ export default function Navigation() {
               </button>
             </div>
             <div className="flex flex-col gap-6">
-              {navLinks.map(link => (
+              {[...navLinks, { label: 'Games', path: '/games' }].map(link => (
                 <Link
                   key={link.path}
                   to={link.path}

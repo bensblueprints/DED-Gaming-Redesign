@@ -66,6 +66,133 @@
   }
 }
 
+/* Ant Design Dark Overrides */
+.ant-picker-panel {
+  background-color: #0B1221 !important;
+}
+
+.ant-picker-content th,
+.ant-picker-content td {
+  color: #CBD5E1 !important;
+}
+
+.ant-picker-cell-in-view {
+  color: #FFFFFF !important;
+}
+
+.ant-picker-cell-disabled {
+  color: #64748B !important;
+}
+
+.ant-picker-header-view,
+.ant-picker-header > button {
+  color: #FFFFFF !important;
+}
+
+.ant-picker-header {
+  border-bottom: 1px solid rgba(30, 58, 138, 0.3) !important;
+}
+
+.ant-picker-body {
+  background: #0B1221 !important;
+}
+
+.ant-picker-footer {
+  background: #0B1221 !important;
+  border-top: 1px solid rgba(30, 58, 138, 0.3) !important;
+}
+
+.ant-picker-today-btn {
+  color: #2563EB !important;
+}
+
+.ant-picker-cell:hover .ant-picker-cell-inner {
+  background: #111D35 !important;
+}
+
+.ant-picker-cell-selected .ant-picker-cell-inner {
+  background: #2563EB !important;
+}
+
+.ant-table {
+  background: transparent !important;
+}
+
+.ant-table-thead > tr > th {
+  background: #111D35 !important;
+  color: #CBD5E1 !important;
+  border-bottom: 1px solid rgba(30, 58, 138, 0.3) !important;
+}
+
+.ant-table-tbody > tr > td {
+  border-bottom: 1px solid rgba(30, 58, 138, 0.3) !important;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: rgba(17, 29, 53, 0.5) !important;
+}
+
+.comparison-table .ant-table-cell {
+  background: transparent !important;
+}
+
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #FFFFFF !important;
+}
+
+.ant-tabs-ink-bar {
+  background: #2563EB !important;
+}
+
+.ant-rate-star-full .ant-rate-star-second {
+  color: #06B6D4 !important;
+}
+
+.ant-progress-bg {
+  background-color: #06B6D4 !important;
+}
+
+.ant-progress-inner {
+  background-color: rgba(30, 58, 138, 0.2) !important;
+}
+
+.ant-statistic-content {
+  color: #FFFFFF !important;
+}
+
+.ant-statistic-title {
+  color: #64748B !important;
+}
+
+.ant-timeline-item-tail {
+  border-left: 2px solid rgba(30, 58, 138, 0.3) !important;
+}
+
+.ant-timeline-item-head-custom {
+  background: transparent !important;
+}
+
+.ant-back-top {
+  right: 24px !important;
+  bottom: 24px !important;
+}
+
+.dark-datepicker .ant-picker-panel {
+  background: #0B1221 !important;
+}
+
+.dark-datepicker .ant-picker-header {
+  background: #0B1221 !important;
+}
+
+.dark-datepicker .ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner {
+  background: #2563EB !important;
+}
+
+.dark-datepicker .ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before {
+  border-color: #06B6D4 !important;
+}
+
 /* Hide injected platform widgets */
 a[href*="kimi.com/agent"],
 a[href*="kimi"][target="_blank"],
@@ -75,4 +202,3 @@ body > a[href*="kimi"],
 [id*="kimi-agent"] {
   display: none !important;
 }
-

@@ -1,5 +1,9 @@
 import { Link } from 'react-router-dom'
 import { Facebook, Instagram, Twitter, MessageCircle, Twitch } from 'lucide-react'
+import Divider from '@mui/material/Divider'
+import IconButton from '@mui/material/IconButton'
+import { BackTop } from 'antd'
+import { ArrowUp } from 'lucide-react'
 
 const quickLinks = [
   { label: 'Home', path: '/' },
@@ -40,22 +44,22 @@ export default function Footer() {
             <p className="text-sm text-ded-text-muted max-w-[240px] mb-6">
               Port Chester's Ultimate Gaming Authority
             </p>
-            <div className="flex items-center gap-4">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-ded-text-muted hover:text-ded-accent-blue transition-colors">
+            <div className="flex items-center gap-2">
+              <IconButton size="small" component="a" href="https://facebook.com" target="_blank" rel="noopener noreferrer" sx={{ color: '#64748B', '&:hover': { color: '#2563EB' } }}>
                 <Facebook className="w-5 h-5" />
-              </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-ded-text-muted hover:text-ded-accent-blue transition-colors">
+              </IconButton>
+              <IconButton size="small" component="a" href="https://instagram.com" target="_blank" rel="noopener noreferrer" sx={{ color: '#64748B', '&:hover': { color: '#2563EB' } }}>
                 <Instagram className="w-5 h-5" />
-              </a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-ded-text-muted hover:text-ded-accent-blue transition-colors">
+              </IconButton>
+              <IconButton size="small" component="a" href="https://twitter.com" target="_blank" rel="noopener noreferrer" sx={{ color: '#64748B', '&:hover': { color: '#2563EB' } }}>
                 <Twitter className="w-5 h-5" />
-              </a>
-              <a href="https://discord.com" target="_blank" rel="noopener noreferrer" className="text-ded-text-muted hover:text-ded-accent-blue transition-colors">
+              </IconButton>
+              <IconButton size="small" component="a" href="https://discord.com" target="_blank" rel="noopener noreferrer" sx={{ color: '#64748B', '&:hover': { color: '#2563EB' } }}>
                 <MessageCircle className="w-5 h-5" />
-              </a>
-              <a href="https://twitch.tv" target="_blank" rel="noopener noreferrer" className="text-ded-text-muted hover:text-ded-accent-blue transition-colors">
+              </IconButton>
+              <IconButton size="small" component="a" href="https://twitch.tv" target="_blank" rel="noopener noreferrer" sx={{ color: '#64748B', '&:hover': { color: '#2563EB' } }}>
                 <Twitch className="w-5 h-5" />
-              </a>
+              </IconButton>
             </div>
           </div>
 
@@ -121,8 +125,10 @@ export default function Footer() {
           </div>
         </div>
 
+        <Divider sx={{ borderColor: 'rgba(30, 58, 138, 0.3)', mt: 6, mb: 3 }} />
+
         {/* Bottom bar */}
-        <div className="mt-12 pt-6 border-t border-ded-border flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-xs text-ded-text-muted">© 2025 DED Gaming. All rights reserved.</p>
           <div className="flex items-center gap-4 text-xs text-ded-text-muted">
             <Link to="/" className="hover:text-white transition-colors">Privacy Policy</Link>
@@ -131,6 +137,13 @@ export default function Footer() {
           </div>
         </div>
       </div>
+
+      {/* Ant Design BackTop */}
+      <BackTop visibilityHeight={400} className="[&>.ant-back-top-content]:bg-ded-accent-blue [&>.ant-back-top-content]:text-white [&>.ant-back-top-content]:rounded-full [&>.ant-back-top-content]:hover:bg-[#3B82F6]">
+        <div className="w-10 h-10 rounded-full bg-ded-accent-blue text-white flex items-center justify-center shadow-lg hover:bg-[#3B82F6] transition-colors cursor-pointer">
+          <ArrowUp className="w-5 h-5" />
+        </div>
+      </BackTop>
     </footer>
   )
 }

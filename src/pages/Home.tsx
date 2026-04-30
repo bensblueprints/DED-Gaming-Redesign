@@ -1,8 +1,29 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { Cpu, Monitor, Zap, HardDrive, Gamepad2, ArrowRight, MapPin, Phone, Mail, Clock } from 'lucide-react'
+import {
+  Cpu, Monitor, Zap, HardDrive, Gamepad2, ArrowRight, MapPin, Phone, Mail, Clock,
+  MonitorPlay, Trophy, Users
+} from 'lucide-react'
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import { Timeline } from 'antd'
+import Stepper from '@mui/material/Stepper'
+import Step from '@mui/material/Step'
+import StepLabel from '@mui/material/StepLabel'
+import StepContent from '@mui/material/StepContent'
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as ReTooltip, ResponsiveContainer
+} from 'recharts'
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel'
+import { Card as ShadcnCard, CardContent as ShadcnCardContent } from '@/components/ui/card'
 import SectionHeading from '@/components/SectionHeading'
 import ScrollReveal from '@/components/ScrollReveal'
 import EventCard from '@/components/EventCard'
@@ -13,10 +34,10 @@ import { products } from '@/data/products'
 gsap.registerPlugin(ScrollTrigger)
 
 const stats = [
-  { value: 55, suffix: '+', label: 'Gaming Stations' },
-  { value: 25, suffix: '+', label: 'PC Gaming Rigs' },
-  { value: 5, suffix: '', label: 'Board Game Tables' },
-  { value: 100, suffix: '+', label: 'Games Available' },
+  { value: 55, suffix: '+', label: 'Gaming Stations', icon: MonitorPlay },
+  { value: 25, suffix: '+', label: 'PC Gaming Rigs', icon: Cpu },
+  { value: 5, suffix: '', label: 'Board Game Tables', icon: Gamepad2 },
+  { value: 100, suffix: '+', label: 'Games Available', icon: Trophy },
 ]
 
 const specs = [
@@ -27,14 +48,93 @@ const specs = [
   { icon: HardDrive, name: 'Storage', value: 'NVMe SSD' },
 ]
 
-const shopPreview = products.slice(0, 4)
+const journeyMilestones = [
+  { children: '2021 - Founded', color: '#06B6D4' as const },
+  { children: '2022 - 50+ Stations', color: '#2563EB' as const },
+  { children: '2023 - First Tournament', color: '#06B6D4' as const },
+  { children: '2024 - Community 1000+', color: '#2563EB' as const },
+]
+
+const howItWorksSteps = [
+  { label: 'Book Online', description: 'Reserve your station or session through our easy online booking system.' },
+  { label: 'Check In', description: 'Arrive at DED Gaming and check in with our friendly front desk staff.' },
+  { label: 'Game On', description: 'Jump into your session and enjoy premium gaming at its finest.' },
+]
+
+const shopPreview = products.slice(0, 6)
 const eventsPreview = events.slice(0, 2)
+
+const growthData = [
+  { month: 'Jan', players: 120 },
+  { month: 'Feb', players: 180 },
+  { month: 'Mar', players: 250 },
+  { month: 'Apr', players: 320 },
+  { month: 'May', players: 410 },
+  { month: 'Jun', players: 530 },
+  { month: 'Jul', players: 680 },
+  { month: 'Aug', players: 850 },
+  { month: 'Sep', players: 920 },
+  { month: 'Oct', players: 1100 },
+  { month: 'Nov', players: 1350 },
+  { month: 'Dec', players: 1600 },
+]
+
+function AnimatedStatCard({ stat }: { stat: typeof stats[0] }) {
+  const [count, setCount] = useState(0)
+  const cardRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const el = cardRef.current
+    if (!el) return
+    const trigger = ScrollTrigger.create({
+      trigger: el,
+      start: 'top 85%',
+      once: true,
+      onEnter: () => {
+        const obj = { val: 0 }
+        gsap.to(obj, {
+          val: stat.value,
+          duration: 1.5,
+          ease: 'power2.out',
+          snap: { val: 1 },
+          onUpdate: () => setCount(Math.round(obj.val)),
+        })
+      },
+    })
+    return () => trigger.kill()
+  }, [stat.value])
+
+  return (
+    <div ref={cardRef}>
+      <Card
+        className="relative overflow-hidden"
+        sx={{
+          background: 'linear-gradient(135deg, #0B1221 0%, #111D35 100%)',
+          border: '1px solid rgba(30, 58, 138, 0.3)',
+          borderRadius: '12px',
+        }}
+      >
+        <div className="absolute inset-0 rounded-xl opacity-20 pointer-events-none"
+          style={{ background: 'linear-gradient(135deg, rgba(37,99,235,0.15) 0%, rgba(6,182,212,0.15) 100%)' }}
+        />
+        <CardContent className="relative z-10 p-6 text-center">
+          <stat.icon className="w-7 h-7 text-ded-accent-cyan mx-auto mb-3" />
+          <div className="font-display text-4xl md:text-5xl font-bold text-white">
+            {count}{stat.suffix}
+          </div>
+          <div className="mt-2 text-sm text-ded-text-secondary">{stat.label}</div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
 
 export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null)
   const heroImageRef = useRef<HTMLDivElement>(null)
   const heroContentRef = useRef<HTMLDivElement>(null)
   const statsRef = useRef<HTMLDivElement>(null)
+  const [activeStep, setActiveStep] = useState(0)
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -61,26 +161,6 @@ export default function Home() {
           scale: 1.1,
         })
       }
-
-      // Stats counter
-      const statElements = statsRef.current?.querySelectorAll('.stat-number')
-      statElements?.forEach((el, i) => {
-        gsap.from(el, {
-          textContent: 0,
-          duration: 1.5,
-          ease: 'power2.out',
-          snap: { textContent: 1 },
-          scrollTrigger: {
-            trigger: el,
-            start: 'top 85%',
-            once: true,
-          },
-          onUpdate: function () {
-            const val = Math.round(Number(this.targets()[0].textContent))
-            el.textContent = String(val) + stats[i].suffix
-          },
-        })
-      })
     })
 
     return () => ctx.revert()
@@ -96,7 +176,7 @@ export default function Home() {
           style={{ backgroundImage: 'url(/images/hero-gamer.jpg)' }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ded-bg via-ded-bg/40 to-transparent" />
-        
+
         <div
           ref={heroContentRef}
           className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4"
@@ -169,17 +249,39 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats Bar */}
-      <section className="bg-ded-surface py-14 md:py-16">
-        <div ref={statsRef} className="container-main">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, i) => (
-              <div key={i} className={`text-center ${i < stats.length - 1 ? 'md:border-r md:border-ded-border' : ''}`}>
-                <div className="stat-number font-display text-4xl md:text-5xl font-bold text-ded-accent-blue">
-                  0{stat.suffix}
-                </div>
-                <div className="mt-2 text-sm text-ded-text-secondary">{stat.label}</div>
+      {/* Our Journey Timeline */}
+      <section className="section-padding bg-ded-surface/50">
+        <div className="container-main">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            <ScrollReveal direction="left">
+              <div>
+                <SectionHeading
+                  eyebrow="Our Story"
+                  heading="Our Journey"
+                />
+                <p className="text-ded-text-secondary leading-relaxed mt-4">
+                  From a small gaming lounge to Port Chester's premier esports destination, DED Gaming has grown alongside our incredible community.
+                </p>
               </div>
+            </ScrollReveal>
+            <ScrollReveal direction="right">
+              <div className="bg-ded-surface rounded-xl border border-ded-border p-6 md:p-8">
+                <Timeline
+                  items={journeyMilestones}
+                  className="[&_.ant-timeline-item-tail]:bg-ded-border"
+                />
+              </div>
+            </ScrollReveal>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Cards */}
+      <section ref={statsRef} className="bg-ded-surface py-14 md:py-16">
+        <div className="container-main">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {stats.map((stat, i) => (
+              <AnimatedStatCard key={i} stat={stat} />
             ))}
           </div>
         </div>
@@ -219,6 +321,120 @@ export default function Home() {
               />
             </ScrollReveal>
           </div>
+        </div>
+      </section>
+
+      {/* How It Works - MUI Stepper */}
+      <section className="section-padding bg-ded-surface/50">
+        <div className="container-main max-w-[960px]">
+          <SectionHeading
+            eyebrow="Simple Process"
+            heading="How It Works"
+            centered
+          />
+          <ScrollReveal>
+            <div className="mt-12 bg-ded-surface rounded-xl border border-ded-border p-6 md:p-10">
+              <Stepper activeStep={activeStep} orientation="vertical" nonLinear>
+                {howItWorksSteps.map((step, index) => (
+                  <Step key={index} completed={index < activeStep}>
+                    <StepLabel
+                      onClick={() => setActiveStep(index)}
+                      sx={{
+                        '& .MuiStepLabel-label': {
+                          color: index === activeStep ? '#FFFFFF !important' : '#64748B',
+                          fontFamily: '"Space Grotesk", sans-serif',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                        },
+                        '& .MuiStepIcon-root': {
+                          color: index <= activeStep ? '#2563EB' : 'rgba(30, 58, 138, 0.3)',
+                        },
+                      }}
+                    >
+                      {step.label}
+                    </StepLabel>
+                    <StepContent>
+                      <p className="text-ded-text-secondary text-sm">{step.description}</p>
+                      <div className="mt-4 flex gap-3">
+                        {index > 0 && (
+                          <button
+                            onClick={() => setActiveStep(index - 1)}
+                            className="px-4 py-1.5 text-xs text-ded-text-secondary border border-ded-border rounded-lg hover:border-ded-accent-blue transition-colors"
+                          >
+                            Back
+                          </button>
+                        )}
+                        {index < howItWorksSteps.length - 1 && (
+                          <button
+                            onClick={() => setActiveStep(index + 1)}
+                            className="px-4 py-1.5 text-xs text-white bg-ded-accent-blue rounded-lg hover:bg-[#3B82F6] transition-colors"
+                          >
+                            Next
+                          </button>
+                        )}
+                        {index === howItWorksSteps.length - 1 && (
+                          <Link
+                            to="/book"
+                            className="px-4 py-1.5 text-xs text-white bg-ded-accent-cyan rounded-lg hover:bg-[#0891B2] transition-colors"
+                          >
+                            Book Now
+                          </Link>
+                        )}
+                      </div>
+                    </StepContent>
+                  </Step>
+                ))}
+              </Stepper>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* Community Growth - Recharts Area Chart */}
+      <section className="section-padding">
+        <div className="container-main max-w-[960px]">
+          <SectionHeading
+            eyebrow="Community"
+            heading="Community Growth"
+            centered
+          />
+          <ScrollReveal>
+            <div className="mt-10 bg-ded-surface rounded-xl border border-ded-border p-6 md:p-8">
+              <div className="flex items-center gap-2 mb-6">
+                <Users className="w-5 h-5 text-ded-accent-cyan" />
+                <span className="text-sm text-ded-text-secondary">Active Players (Monthly)</span>
+              </div>
+              <ResponsiveContainer width="100%" height={300}>
+                <AreaChart data={growthData}>
+                  <defs>
+                    <linearGradient id="colorPlayers" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#2563EB" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#2563EB" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(30, 58, 138, 0.2)" />
+                  <XAxis dataKey="month" stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} />
+                  <YAxis stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} />
+                  <ReTooltip
+                    contentStyle={{
+                      backgroundColor: '#0B1221',
+                      border: '1px solid rgba(30, 58, 138, 0.3)',
+                      borderRadius: '8px',
+                      color: '#FFFFFF',
+                    }}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="players"
+                    stroke="#2563EB"
+                    strokeWidth={2}
+                    fillOpacity={1}
+                    fill="url(#colorPlayers)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -271,7 +487,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Food & Drink Preview */}
+      {/* Food & Drink Preview - shadcn Carousel */}
       <section className="section-padding">
         <div className="container-main">
           <SectionHeading
@@ -279,13 +495,29 @@ export default function Home() {
             heading="Snacks, drinks, and energy — delivered to your station"
             centered
           />
-          <ScrollReveal stagger={0.08} childSelector=".product-card">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {shopPreview.map(product => (
-                <div key={product.id} className="product-card">
-                  <ProductCard product={product} />
-                </div>
-              ))}
+          <ScrollReveal>
+            <div className="mt-10">
+              <Carousel
+                opts={{
+                  align: 'start',
+                  loop: true,
+                }}
+                className="w-full"
+              >
+                <CarouselContent className="-ml-4">
+                  {shopPreview.map(product => (
+                    <CarouselItem key={product.id} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+                      <ShadcnCard className="bg-ded-surface border-ded-border h-full">
+                        <ShadcnCardContent className="p-0">
+                          <ProductCard product={product} />
+                        </ShadcnCardContent>
+                      </ShadcnCard>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="hidden md:flex -left-12 bg-ded-surface border-ded-border text-white hover:bg-ded-surface-light hover:text-white" />
+                <CarouselNext className="hidden md:flex -right-12 bg-ded-surface border-ded-border text-white hover:bg-ded-surface-light hover:text-white" />
+              </Carousel>
             </div>
           </ScrollReveal>
           <div className="text-center mt-10">
