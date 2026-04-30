@@ -1,0 +1,22 @@
+﻿version: "3.8"
+
+services:
+  ded-gaming:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ded-gaming
+    restart: unless-stopped
+    networks:
+      - coolify
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=coolify"
+      - "traefik.http.routers.ded-gaming.rule=Host(ded.advancedmarketing.co)"
+      - "traefik.http.routers.ded-gaming.tls=true"
+      - "traefik.http.routers.ded-gaming.tls.certresolver=letsencrypt"
+      - "traefik.http.services.ded-gaming.loadbalancer.server.port=80"
+
+networks:
+  coolify:
+    external: true
